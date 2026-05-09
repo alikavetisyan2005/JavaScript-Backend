@@ -1,0 +1,121 @@
+1. What is the HTTP protocol about? How does it relate to TCP?
+
+--The HTTP Protocol is the set of rules, that allows web browsers and servers to communicate with each other on the internet(Client-server).
+--1.Your browser send an http request to the server
+--2.Server processes the request.
+--3.The Server sends it back as HTTP Response.
+--4.Browser displays the response.
+
+TCP and HTTP are different layers of the network stack.
+HTTP rides on top of TCP.
+
+--------------------------------------------------------------------------------------------
+
+2.What is the structure of HTTP request?
+--Request Body
+--Headers
+--Body(OPTIONAL)
+
+--1 request line - this is the line that tells the server  what you want (ex. METHOD path HTTP/ Version GET example.com HTTP / 1.1)
+--2 Headers - are key value pairs (ex. Host example.com, User-Agent: Mozilla 5.0, Content-type: text/html)
+--3 Body - The body sends the actual data you want. (POST, PATCH, PUT)
+
+---------------------------------------------------------------------------------------------
+
+3.What is the structure of HTTP Response
+--Status Line
+--Headers
+--Body
+
+--1 Status line - this is the result of request you send (ex. HTTP Version status_code status_message: HTTP 1.1 200 "OK")
+--2 Headers - are key value pairs (ex. Content-type: text/html, Content-Length: 43)
+--3 Body - The body sends the actual data returned. (ex. html text).
+
+------------------------------------------------------------------------------------------------
+
+4.What does "stateless" mean in HTTP context?
+
+It means that each request is considered as completely new independent request and interacion. The server does not
+anything about previous requests.
+
+------------------------------------------------------------------------------------------------
+
+5.List and explain atb least 5 HTTP methods? 
+
+GET --- Get a document from the server
+POST --- Send the data to the server for processing
+PUT --- Store the body of the request to the server 
+PATCH --- Update the document in the server
+DELETE --- Delete the document from the server
+
+--------------------------------------------------------------------------------------------------
+
+6.Explain status codes categories: 1xx, 2xx, 3xx, 4xx, 5xx?
+
+100-199 --- Informational status codes
+100 - continue
+101 - Switching protocols
+
+200-299 --- Success status codes
+
+200 - request is OK 
+201 - created
+204 - No content
+
+300-399 Redirectional status codes
+
+300 - multiple choices
+302 - temporary redirect 
+
+400-499 --- Client Errors
+
+400 - Bad Request
+404 - Not Found
+
+500-599 --- Server Errors
+
+502 - Bad gateway
+503 - Service unavailable
+
+------------------------------------------------------------------------------
+
+7. What is Content-Type in header? Why does it matter?
+
+It tells the reciever what kind of data is being sent in the body - so it knows how to interpret it . 
+ex. if you sent JSON but dont set:
+Content-Type: application/json
+the server might treat it as a plain text
+
+---------------------------------------------------------------------------------
+
+8. What is the difference between http and net modules in Node.js?
+
+The Core difference
+--net module works with raw TCP sockets
+--http module built on top pf the net, understands HTTP protocol
+
+---------------------------------------------------------------------------------
+
+9. Why don’t we need to manually parse incoming bytes when using http module?
+
+Because the HTTP module already does the byte parsing for you.
+
+When data arrives over a TCP socket, it’s just a stream of raw bytes. An HTTP server/client has to:
+--detect where headers end (\r\n\r\n)
+--split request/status line
+--parse headers
+--handle chunked transfer encoding
+--manage content length
+--decode keep-alive connections
+--handle partial packets and buffering
+--reconstruct messages across multiple TCP frames
+
+----------------------------------------------------------------------------------
+
+10. What is the purpose of req.on('data') and req.on('end') events?
+
+req is a readable stream. The HTTP request body does not necessarily arrive all at once — it may come in multiple chunks over time.
+So Node exposes stream events:
+
+-- data → fired whenever a chunk of body data arrives
+-- end → fired when the entire request body has been received
