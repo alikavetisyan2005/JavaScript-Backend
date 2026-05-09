@@ -5,6 +5,8 @@ const books = [
     {id: 2, title: "You dont know js", author: "Kyle Sympson"},
 ];
 
+let nextId = books.length > 0 ? Math.max(...books.map(book => book.id)) + 1 : 1
+
 
 
 const server = http.createServer((req,res) => {
@@ -37,8 +39,8 @@ const server = http.createServer((req,res) => {
                     res.writeHead(400);
                     return res.end(JSON.stringify({message: "Missing fields"}));
                 }
-                const newID = books.length + 1;
-                book.id = newID;
+
+                book.id = nextId++;
                 books.push(book);
 
                 res.writeHead(201);
@@ -52,8 +54,99 @@ const server = http.createServer((req,res) => {
         return;
     }
 
+    if(req.method === "PUT" && req.url.startsWith("/books/")){
+        const id = Number(req.url.split("/")[2])
+
+        if(isNaN(id)){
+            res.writeHead(400);
+            return res.end(JSON.stringify({message: "Id is invalid"}))
+        }
+
+        const bookIndex = books.findIndex(book => book.id === id);
+
+        if(bookIndex === -1){
+            res.writeHead(400);
+            return res.end(JSON.stringify({message: "Book not found"}))
+        }
+
+        let body = "";
+
+        req.on("data", (chunk) => {
+            body += chunk;
+        })
+        req.on("end", () => {
+            try{
+                const updatedBook = JSON.parse(body);
+
+                if(!updatedBook.title || !updatedBook.author){
+                    res.writeHead(400);
+                    return res.end(JSON.stringify({message: "fields should be filled with valid values"}))
+                }
+
+                books[bookIndex] = {
+                    id,
+                    title: updatedBook.title,
+                    author: updatedBook.author,
+                }
+
+                res.writeHead(200);
+                return res.end(JSON.stringify({message: "Book is updated"}))
+            }
+            catch{
+                res.writeHead(400);
+                return res.end(JSON.stringify({message: "invalid JSON"}))
+            }
+        })
+        return;
+    }
+
+    if(req.method === "PATCH" && req.url.startsWith("/books/")){
+        const id = Number(req.url.split("/")[2]);
+
+        if(isNaN(id)){
+            res.writeHead(404);
+            return res.end(JSON.stringify({message: "id is invalid"}));
+        }
+
+        const bookIndex = books.findIndex(book => book.id === id);
+
+        if(bookIndex === -1){
+            res.writeHead(400);
+            return res.end(JSON.stringify({message: "Book with this id does not exist"}));
+        }
+
+        let body = "";
+
+        req.on("data", (chunk) => body += chunk);
+
+        req.on("end", () => {
+            try{
+                const update = JSON.parse(body);
+                
+                if(!update) {
+                    res.writeHead(400);
+                    return res.end(JSON.stringify({message: "Fields must be filled"}))
+                }
+                books[bookIndex] = {
+                    ...books[bookIndex],
+                    ...update
+                }
+
+                res.writeHead(200);
+                return res.end(JSON.stringify("Field is updated"))
+            }
+            catch{
+                res.writeHead(400);
+                return res.end(JSON.stringify({message: "Invalid JSON"}))
+            }
+        })
+
+
+        return;
+    }
+
     res.writeHead(404);
-    res.end(JSON.stringify("Route was not found"))
+    res.end(JSON.stringify({message: "Route was not found"}))
 })
 
 
