@@ -1,0 +1,57 @@
+[
+  {
+    "id": "101",
+    "username": "alikavetisyan7",
+    "email": "alik.avetisyan.005@gmail.com",
+    "password": "passw1234",
+    "role": "admin"
+  },
+  {
+    "id": "102",
+    "username": "gagoavetisyan7",
+    "email": "gag.avetisyan.005@gmail.com",
+    "password": "pasword000",
+    "role": "user"
+  },
+  {
+    "id": "103",
+    "username": "alikavetisyan",
+    "email": "alik.avetisyan.005@gmail.com",
+    "password": "passw1234",
+    "role": "admin"
+  },
+  {
+    "id": "",
+    "username": "alikavetyan",
+    "email": "alik.avetisyan.005@gmail.com",
+    "password": "passw1234",
+    "role": "admin"
+  },
+  {
+    "username": "abovetyan",
+    "email": "abo.avetisyan.005@gmail.com",
+    "password": "passw1234",
+    "role": "admin"
+  },
+  {
+    "id": 1778700903592,
+    "username": "emmaavetisyan",
+    "email": "emma.avetisyan@mail.ru",
+    "password": "passw1234",
+    "role": "user"
+  },
+  {
+    "id": 1778781695133,
+    "username": "emetisyan",
+    "email": "emma.atisyan@mail.ru",
+    "password": "passw1234",
+    "role": "customer"
+  },
+  {
+    "id": 1778785973925,
+    "username": "admin",
+    "email": "admin@gmail.com",
+    "password": "1234",
+    "role": "admin"
+  }
+]

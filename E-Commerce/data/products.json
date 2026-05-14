@@ -1,0 +1,37 @@
+[
+  {
+    "id": "101",
+    "name": "Coca-Cola",
+    "description": "Sary ympeliq",
+    "price": "450",
+    "quantity": "120"
+  },
+  {
+    "id": "102",
+    "name": "Fanta",
+    "description": "Sary ympeliq",
+    "price": "350",
+    "quantity": "100"
+  },
+  {
+    "id": "103",
+    "name": "Sprite",
+    "description": "Sary ympeliq",
+    "price": "300",
+    "quantity": "89"
+  },
+  {
+    "id": 1778784555649,
+    "name": "Red-Bull",
+    "description": "Energy drink",
+    "price": "800",
+    "quantity": 1
+  },
+  {
+    "id": 1778786641226,
+    "name": "Monster",
+    "description": "Energy drink",
+    "price": 1200,
+    "quantity": 2
+  }
+]
