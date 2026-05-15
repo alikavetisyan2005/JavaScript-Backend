@@ -1,10 +1,10 @@
 [
   {
     "id": "101",
-    "name": "Coca-Cola",
-    "description": "Sary ympeliq",
-    "price": "450",
-    "quantity": "120"
+    "name": "Coca-Cola Zeroo",
+    "description": "cold drink",
+    "price": 500,
+    "quantity": 2
   },
   {
     "id": "102",
@@ -12,13 +12,6 @@
     "description": "Sary ympeliq",
     "price": "350",
     "quantity": "100"
-  },
-  {
-    "id": "103",
-    "name": "Sprite",
-    "description": "Sary ympeliq",
-    "price": "300",
-    "quantity": "89"
   },
   {
     "id": 1778784555649,
