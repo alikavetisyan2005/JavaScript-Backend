@@ -1,16 +1,12 @@
 [
   {
-    "id": "101",
+    "id": 1779005632185,
     "user_id": "101",
-    "order_date": "2026-14-5",
-    "total_amount": "1",
-    "status": "pending",
+    "order_date": "2026-05-17T08:13:52.185Z",
     "items": [
-      {
-        "product_id": "101",
-        "quantity": "10",
-        "price_at_purchase": "450"
-      }
-    ]
+      { "product_id": "101", "quantity": 4 },
+      { "product_id": 102, "quantity": 4 }
+    ],
+    "total_amount": 3400
   }
 ]

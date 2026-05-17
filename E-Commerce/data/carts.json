@@ -1,11 +1,1 @@
-[
-  {
-    "id": "111",
-    "user_id": "101",
-    "items": [
-      { "product_id": "101", "quantity": "120" },
-      { "product_id": 102, "quantity": 4 }
-    ]
-  },
-  { "user_id": "102", "items": [], "id": 1778865703445 }
-]
+[{"id":"111","user_id":"101","items":[]},{"user_id":"102","items":[],"id":1778865703445}]
