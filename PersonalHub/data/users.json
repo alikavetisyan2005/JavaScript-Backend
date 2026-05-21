@@ -1,0 +1,14 @@
+[
+  {
+    "id": "67071548-e89f-46a7-ae2d-0de2c7ba7ae8",
+    "username": "anna",
+    "passwordHash": "$2b$10$JSdFxLsPnm/uMGxlppGd9.LklLWmfTrC/W1rAVLC36.VoM.mowDUC",
+    "createdAt": "2026-05-21T18:10:20.703Z"
+  },
+  {
+    "id": "f409da87-7bbe-40b3-b3eb-b13e165e4477",
+    "username": "Boris",
+    "passwordHash": "$2b$10$.WGGpiNDWuG/y.8G4XnFOekY6cMf2BriidtD.zlbpHOG1rvmAa5D.",
+    "createdAt": "2026-05-21T18:31:25.932Z"
+  }
+]

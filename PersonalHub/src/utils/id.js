@@ -1,8 +1,8 @@
 const crypto = require("crypto")
-function generateID(){
+function generateId(){
     return crypto.randomUUID();
 }
 
 module.exports = {
-    generateID
+    generateId
 }

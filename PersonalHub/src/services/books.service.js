@@ -2,35 +2,32 @@ const AppError = require("../utils/AppError");
 const fileDb = require("../utils/fileDb");
 const { generateId } = require("../utils/id");
 const path = require("node:path");
+const bookModel = require("../models/books.model")
 
 const filePath = path.join(__dirname, "../../data/books.json");
 
 async function getBooks(userId) {
-  const books = await fileDb.readJson(filePath);
-
-  const userBooks = books.filter((book) => book.ownerId === userId);
+  const userBooks = await bookModel.getBooksByUserId(userId)
 
   return userBooks;
 }
 
 async function getBookById(userId, id) {
-  const books = await fileDb.readJson(filePath);
 
-  const book = books.find((book) => book.id === id);
+  const book = await bookModel.getBookById(id);
 
   if (!book) {
     throw new AppError("Book not found", 404);
   }
 
   if (book.ownerId !== userId) {
-    throw new AppError("Not authorized", 401);
+    throw new AppError("Forbidden", 403);
   }
 
   return book;
 }
 
 async function createBook(userId, data) {
-  const books = await fileDb.readJson(filePath);
 
   const newBook = {
     id: generateId(),
@@ -43,69 +40,84 @@ async function createBook(userId, data) {
     updatedAt: new Date().toISOString(),
   };
 
-  books.push(newBook);
-
-  await fileDb.writeJson(filePath, books);
+  await bookModel.createBook(newBook);
 
   return newBook;
 }
-
 async function updateBook(userId, id, data) {
-  const books = await fileDb.readJson(filePath);
 
-  const index = books.findIndex((book) => book.id === id);
+    const book = await booksModel.getBookById(id);
 
-  if (index === -1) {
-    throw new AppError("Not found", 404);
-  }
+    if (!book) {
+        throw new AppError("Book not found", 404);
+    }
 
-  const book = books[index];
+    if (book.ownerId !== userId) {
+        throw new AppError("Forbidden", 403);
+    }
 
-  if (book.ownerId !== userId) {
-    throw new AppError("Not auth", 401);
-  }
-  if (
-    data.rating !== undefined &&
-    book.status !== "finished" &&
-    data.status !== "finished"
-  ) {
-    throw new AppError("Rating only allowed for finished books", 400);
-  }
+    const finalStatus = data.status ?? book.status;
 
-  books[index] = {
-    ...book,
-    title: data.title ?? book.title,
-    author: data.author ?? book.author,
-    rating: data.rating ?? book.rating,
-    status: data.status ?? book.status,
-    updatedAt: new Date().toISOString(),
-  };
+    if (data.rating !== undefined && finalStatus !== "finished") {
+        throw new AppError("Rating only allowed for finished books", 400);
+    }
 
-  await fileDb.writeJson(filePath, books);
+    const updatedBook = {
+        ...book,
+        title: data.title ?? book.title,
+        author: data.author ?? book.author,
+        rating: data.rating ?? book.rating,
+        status: finalStatus,
+        updatedAt: new Date().toISOString(),
+    };
 
-  return books[index];
+    return await booksModel.updateBook(id, updatedBook);
 }
+async function updateBook(userId, id, data) {
 
+    const book = await booksModel.getBookById(id);
+
+    if (!book) {
+        throw new AppError("Book not found", 404);
+    }
+
+    if (book.ownerId !== userId) {
+        throw new AppError("Forbidden", 403);
+    }
+
+    const finalStatus = data.status ?? book.status;
+
+    if (data.rating !== undefined && finalStatus !== "finished") {
+        throw new AppError("Rating only allowed for finished books", 400);
+    }
+
+    const updatedBook = {
+        ...book,
+        title: data.title ?? book.title,
+        author: data.author ?? book.author,
+        rating: data.rating ?? book.rating,
+        status: finalStatus,
+        updatedAt: new Date().toISOString(),
+    };
+
+    return await booksModel.updateBook(id, updatedBook);
+}
 async function deleteBook(userId, id) {
-  const books = await fileDb.readJson(filePath);
 
-  const book = books.find((book) => book.id === id);
+    const book = await booksModel.getBookById(id);
 
-  if (!book) {
-    throw new AppError("Not found", 404);
-  }
+    if (!book) {
+        throw new AppError("Book not found", 404);
+    }
 
-  if (book.ownerId !== userId) {
-    throw new AppError("Not auth", 401);
-  }
+    if (book.ownerId !== userId) {
+        throw new AppError("Forbidden", 403);
+    }
 
-  const filtered = books.filter((book) => book.id !== id);
+    await booksModel.deleteBook(id);
 
-  await fileDb.writeJson(filePath, filtered);
-
-  return book;
+    return book;
 }
-
 
 module.exports = {
     getBooks,

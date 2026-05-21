@@ -1,137 +1,103 @@
 const AppError = require("../utils/appError");
-const fileDb = require("../utils/fileDB");
-const {genereteID} =  require("../utils/id");
-const path = require("node:path")
-
-const filePath = path.join(__dirname, "../../data/habits.json");
+const { generateId } = require("../utils/id");
+const habitsModel = require("../models/habits.model");
 
 
 async function getHabits(userId) {
-    const habits = await fileDb.readJson(filePath);
-
-    const userHabits = habits.filter(h => h.ownerId === userId);
-
-    return userHabits;
+  const userHabits = await habitsModel.getHabitsByUserId(userId);
+  return userHabits;
 }
 
-
 async function getHabitById(userId, id) {
-    const habits = await fileDb.readJson(filePath);
+  const habit = await habitsModel.getHabitById(id);
 
-    const habit = habits.find(h => h.id === id);
+  if (!habit) {
+    throw new AppError("habit not found", 404);
+  }
+  if (habit.ownerId !== userId) {
+    throw new AppError("Forbidden", 403);
+  }
 
-    if(!habit) {
-        throw new AppError("habit not found", 404);
-    }
-    if(habit.ownerId !== userId){
-        throw new AppError("Not authorized", 401);
-    }
-
-    return habit;
+  return habit;
 }
 
 async function createHabit(userId, data) {
-    const habits = await fileDb.readJson(filePath);
+  const newHabit = {
+    id: generateId(),
+    ownerId: userId,
+    name: data.name,
+    frequency: data.frequency,
+    checkIns: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
 
-    const newHabit = {
-        id: genereteID(),
-        ownerId: userId,
-        name: data.name,
-        frequency: data.frequency,
-        checkIns: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-    }
-
-    habits.push(newHabit);
-
-    await fileDb.writeJson(filePath, habits);
-    return newHabit
+  await habitsModel.createHabit(newHabit);
+  return newHabit;
 }
 
-
 async function updateHabit(userId, id, data) {
-    const habits = await fileDb.readJson(filePath);
+  const habit = await habitsModel.getHabitById(id);
 
-    const index = habits.findIndex(h => h.id === id);
+  if (!habit) {
+    throw new AppError("Habit not found", 404);
+  }
 
-    if(index === -1){
-        throw new AppError("Not found", 404)
-    }
-    const habit = habits[index];
+  if (habit.ownerId !== userId) {
+    throw new AppError("Forbidden", 403);
+  }
 
-    if(habit.ownerId !== userId){
-        throw new AppError("Not authorized", 401);
-    }
+  const updatedHabit = {
+    name: data.name ?? habit.name,
+    frequency: data.frequency ?? habit.frequency,
+    checkIns: habit.checkIns,
+    ownerId: habit.ownerId,
+    createdAt: habit.createdAt,
+    updatedAt: new Date().toISOString(),
+  };
 
-    habits[index] = {
-        ...habit,
-        name: data.name ?? habit.name,
-        frequency: data.frequency ?? habit.frequency,
-        updatedAt: new Date().toISOString()
-    }
-
-
-    await fileDb.writeJson(filePath, habits);
-
-    return habits[index]
-
+  return await habitsModel.updateHabit(id, updatedHabit);
 }
 
 async function deleteHabit(userId, id) {
-    const habits = await fileDb.readJson(filePath);
+  const habit = await habitsModel.getHabitById(id);
 
+  if (!habit) {
+    throw new AppError("Not found", 404);
+  }
+  if (habit.ownerId !== userId) {
+    throw new AppError("forbidden", 403);
+  }
 
-    const habit = habits.find(h => h.id === id);
-
-    if(!habit){
-        throw new AppError("Not found");
-    }
-    if(habit.ownerId !== userId){
-        throw new AppError("Not authorized")
-    }
-
-    const filtered = habits.filter(h => h.id !== id);
-
-    await fileDb.writeJson(filePath, filtered);
-
-    return habit;
+  await habitsModel.deleteHabit(id);
+  return habit;
 }
-
 
 async function checkInHabit(userId, id) {
-    const habits = await fileDb.readJson(filePath);
+  const habit = await habitsModel.getHabitById(id);
 
-    const index = habits.findIndex(h => h.id === id);
+  if (!habit) {
+    throw new AppError("Habit not found", 404);
+  }
 
-    if (index === -1) {
-        throw new AppError("Habit not found", 404);
-    }
+  if (habit.ownerId !== userId) {
+    throw new AppError("Forbidden", 403);
+  }
 
-    const habit = habits[index];
+  const updatedHabit = {
+    ...habit,
+    checkIns: habit.checkIns + 1,
+    updatedAt: new Date().toISOString(),
+  };
 
-    if (habit.ownerId !== userId) {
-        throw new AppError("Not authorized", 403);
-    }
-
-    habits[index] = {
-        ...habit,
-        checkIns: habit.checkIns + 1,
-        updatedAt: new Date().toISOString()
-    };
-
-    await fileDb.writeJson(filePath, habits);
-
-    return habits[index];
+  return await habitsModel.updateHabit(id, updatedHabit);
 }
-
-
 
 module.exports = {
-    getHabits,
-    getHabitById,
-    createHabit,
-    updateHabit,
-    deleteHabit,
-    checkInHabit
-}
+  getHabits,
+  getHabitById,
+  createHabit,
+  updateHabit,
+  deleteHabit,
+  checkInHabit,
+};

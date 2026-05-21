@@ -1,16 +1,18 @@
 const fileDb = require("../utils/fileDb");
 const AppError = require("../utils/AppError");
 const { hashPassword, verifyPassword } = require("../utils/hash");
-const { generateID } = require("../utils/id");
+const { generateId } = require("../utils/id");
 const path = require("node:path");
 const { signToken } = require("../utils/token");
+const userModel = require("../models/user.model");
 
 const filePath = path.join(__dirname, "../../data/users.json");
 
 
 
 async function register(data) {
-    const users = await fileDb.readJson(filePath);
+    const users = await userModel.getAllUsers();
+    
 
     const exists = users.find(user => user.username === data.username);
 
@@ -19,15 +21,14 @@ async function register(data) {
     }
 
     const newUser = {
-        id: generateID(),
+        id: generateId(),
         username: data.username,
-        passwordHash: hashPassword(data.password),
+        passwordHash: await hashPassword(data.password),
         createdAt: new Date().toISOString(),
     }
 
-    users.push(newUser);
+    await userModel.createUser(newUser);
 
-    await fileDb.writeJson(filePath, users);
 
     const token = signToken({
         id: newUser.id,
@@ -41,7 +42,7 @@ async function register(data) {
 
 
 async function login(data) {
-    const users = await fileDb.readJson(filePath);
+    const users = await userModel.getAllUsers();
 
     const {username, password} = data;
 
@@ -49,16 +50,16 @@ async function login(data) {
         throw new AppError("Required data", 400)
     }
 
-    const user = users.find(user => user.username === username);
+    const user = await userModel.getUserByUsername(username);
 
     if(!user){
         throw new AppError("User not found", 404)
     }
 
-    const isValid = verifyPassword(password, user.passwordHash);
+    const isValid = await verifyPassword(password, user.passwordHash);
 
     if(!isValid){
-        throw new AppError("wrong password", 400);
+        throw new AppError("wrong password", 401);
     }
 
     const token = signToken({
@@ -71,9 +72,8 @@ async function login(data) {
 
 
 async function getMe(userId) {
-    const users = await fileDb.readJson(filePath);
 
-    const me = users.find(user => user.id === userId);
+    const me = await userModel.getUserById(userId);
 
     if(!me){
         throw new AppError("user not found", 404);
