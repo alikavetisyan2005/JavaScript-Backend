@@ -1,0 +1,2 @@
+SELECT * FROM albums WHERE release_date BETWEEN '2010-01-01' AND '2020-01-01';
+
