@@ -1,4 +1,8 @@
 CREATE TABLE songs (id SERIAL PRIMARY KEY,
 name varchar(30),
 artists_id INT REFERENCES artists(id),
-albums_id INT REFERENCES albums(id)); 
+albums_id INT REFERENCES albums(id),
+length_seconds INT CHECK(length_songs > 0),
+genre text);
+
+
