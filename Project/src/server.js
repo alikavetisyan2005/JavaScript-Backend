@@ -2,12 +2,14 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors")
 const app = express();
-const authRoutes = require("./routes/auth/auth")
+const authRoutes = require("./routes/auth/auth.routes")
+const productRoutes = require("./routes/product/product.routes")
 
 
 app.use(express.json())
 app.use(cors())
-app.use("/auth", authRoutes)
+app.use("/auth", authRoutes);
+app.use("/products", productRoutes)
 
 app.get("/", (req, res)  => {
     return res.json({message: "Api is running"})    
