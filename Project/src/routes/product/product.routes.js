@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const { where } = require("underscore");
 const prisma = require("../../db");
 const isAdmin = require("../../middleware/auth/admin.middleware");
 const authMiddleware = require("../../middleware/auth/auth.middleware");

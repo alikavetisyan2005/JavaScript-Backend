@@ -4,12 +4,18 @@ const cors = require("cors")
 const app = express();
 const authRoutes = require("./routes/auth/auth.routes")
 const productRoutes = require("./routes/product/product.routes")
+const categoryRoutes = require("./routes/category/category.routes");
+const cartRoutes = require("./routes/cart/cart.routes");
 
 
 app.use(express.json())
 app.use(cors())
+
+
 app.use("/auth", authRoutes);
-app.use("/products", productRoutes)
+app.use("/products", productRoutes);
+app.use("/categories", categoryRoutes);
+app.use("/carts", cartRoutes);
 
 app.get("/", (req, res)  => {
     return res.json({message: "Api is running"})    
